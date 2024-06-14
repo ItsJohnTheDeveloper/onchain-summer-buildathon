@@ -5,8 +5,10 @@ Our mission at Social Recovery is to provide a secure and user-friendly platform
 ## Technologies Used
 
 - **Supabase**: Used as the database for this project. Supabase offers a generous free tier, making it a great choice for small to medium-sized projects.
-- **Tanstack Query (formerly React Query)**: Used for client-side caching. This helps to improve performance by reducing the number of requests to the server.
+- **Next.js**: Used as the framework for the project. Next.js is a powerful tool for building React applications, offering features like server-side rendering and static site generation.
+- **Vercel**: Used for deployment. Vercel is a great platform for hosting Next.js applications, offering a seamless deployment process and integration with Git repositories.
 - **Tailwind CSS**: Used for styling the application. It also includes a dark/light mode configuration.
+- **Tanstack Query (formerly React Query)**: Used for client-side caching. This helps to improve performance by reducing the number of requests to the server.
 
 ## Demo
 
