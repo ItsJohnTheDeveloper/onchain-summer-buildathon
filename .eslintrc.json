@@ -1,3 +1,47 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": [
+    "plugin:@nx/react-typescript",
+    "next",
+    "next/core-web-vitals",
+    "../../.eslintrc.json"
+  ],
+  "plugins": ["tailwindcss"],
+  "ignorePatterns": ["!**/*", ".next/**/*"],
+  "settings": {
+    "tailwindcss": {
+      "callees": ["cn", "cva"],
+      "classRegex": "^class(Name(s)?)?$",
+      // Keep eslint from looking at the wrong files.
+      "cssFiles": [
+        "!**/node_modules",
+        "!**/.*",
+        "!**/dist",
+        "!**/build"
+      ]
+    }
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"]
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "env": {
+        "jest": true
+      }
+    }
+  ],
+  "rules": {
+    "@next/next/no-html-link-for-pages": "off",
+    "tailwindcss/no-custom-classname": "warn",
+    "tailwindcss/no-contradicting-classname": "error"
+  }
 }

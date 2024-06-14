@@ -1,27 +1,54 @@
-import './globals.css'
-import { Inter } from 'next/font/google'
+import { Inter, Raleway } from "next/font/google";
+import "./globals.css";
+
+import { Providers } from "./_lib/providers";
+import { cn } from "@/lib/utils";
+import { Header } from "@/components/header";
 
 export const metadata = {
-  metadataBase: new URL('https://postgres-kysely.vercel.app'),
-  title: 'Vercel Postgres Demo with Kysely',
+  metadataBase: new URL("https://recovery.vercel.app"),
+  title: "Social Recovery",
   description:
-    'A simple Next.js app with Vercel Postgres as the database and Kysely as the ORM',
-}
+    "Social Recovery allows wallet holders to recover their funds by asking friends to help them via Passkeys.",
+};
 
 const inter = Inter({
-  variable: '--font-inter',
-  subsets: ['latin'],
-  display: 'swap',
-})
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
 
-export default function RootLayout({
+const raleway = Raleway({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-raleway",
+});
+
+export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
+  const walletData = {
+    publicKey: "0x1234...",
+    publicPhoto: "/Avatar.webp",
+  };
   return (
-    <html lang="en">
-      <body className={inter.variable}>{children}</body>
-    </html>
-  )
+    <Providers>
+      <html
+        // Add the font variables so they be available for tailwind
+        className={cn(inter.variable, raleway.variable)}
+      >
+        <head>
+          <title>{metadata.title as string}</title>
+        </head>
+        <body className="font-body bg-background text-foreground min-h-screen antialiased">
+          <div className="flex min-h-screen flex-col">
+            <Header wallet={walletData} />
+            {children}
+          </div>
+        </body>
+      </html>
+    </Providers>
+  );
 }
