@@ -1,4 +1,4 @@
-# Social Recovery
+# Social Recovery Buildathon
 
 Our mission at Social Recovery is to provide a secure and user-friendly platform for crypto wallet owners. We understand the importance of security and accessibility in the world of digital assets. That's why we've created a unique recovery system that allows users to connect with their friends and family via passkeys. These trusted individuals can then sign transactions on the wallet owner's behalf, providing an additional layer of security and peace of mind. Our goal is to make the management and recovery of digital assets as seamless and social as possible, ensuring that no one loses access to their crypto due to lost keys or forgotten passwords.
 
