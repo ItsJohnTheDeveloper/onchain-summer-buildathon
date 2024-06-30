@@ -6,6 +6,9 @@ import { Typography } from "./typography";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { useQuery } from "@tanstack/react-query";
 import { getSampleDataServer } from "@/app/_lib/get-sample-data-server";
+import Link from "next/link";
+import { Profile } from "./icons";
+import { Skeleton } from "./skeleton";
 
 interface HeaderProps {
   wallet: {
@@ -15,35 +18,48 @@ interface HeaderProps {
 }
 export function Header({ wallet }: HeaderProps) {
   const [darkMode, setDarkMode] = useState(true);
+  const session = null;
+  console.log({ session });
 
   const { data } = useQuery({
     queryKey: ["test-data"],
     queryFn: async () => await getSampleDataServer(),
   });
 
-  console.log({ data });
+  // console.log({ data });
 
   useEffect(() => {
     document.documentElement.setAttribute(
       "data-theme",
-      darkMode ? "dark" : "light"
+      !darkMode ? "light" : "dark"
     );
   }, [darkMode]);
 
   return (
     <header className="bg-card p-4 flex justify-between items-center border-b-[1px] border-muted">
-      <Typography variant="h4">Social Recovery</Typography>
       <div className="flex items-center gap-4">
+        <Link href="/" className="font-bold">
+          Home
+        </Link>
         <Switch
           checked={darkMode}
           onCheckedChange={(checked) => setDarkMode(checked)}
         />
-        <Typography variant="h4">{wallet.publicKey}</Typography>
-        <Avatar>
-          <AvatarImage className="object-cover" src={wallet.publicPhoto} />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
       </div>
+
+      {/* {session && session?.user ? (
+        <Avatar>
+          <AvatarImage
+            className="object-cover"
+            src={session.user.image as string}
+          />
+          <AvatarFallback>{session.user?.name?.[0] ?? "Gauth"}</AvatarFallback>
+        </Avatar>
+      ) : status === "loading" ? (
+        <Skeleton className="rounded-full w-[40px] h-[40px]" />
+      ) : (
+        <Profile className="w-[40px]" />
+      )} */}
     </header>
   );
 }

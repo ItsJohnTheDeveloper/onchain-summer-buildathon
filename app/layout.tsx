@@ -38,6 +38,7 @@ export default async function RootLayout({
       <html
         // Add the font variables so they be available for tailwind
         className={cn(inter.variable, raleway.variable)}
+        data-theme="dark"
       >
         <head>
           <title>{metadata.title as string}</title>
