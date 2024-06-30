@@ -3,12 +3,8 @@
 import { useEffect, useState } from "react";
 import { Switch } from "./switch";
 import { Typography } from "./typography";
-import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-import { useQuery } from "@tanstack/react-query";
-import { getSampleDataServer } from "@/app/_lib/get-sample-data-server";
 import Link from "next/link";
-import { Profile } from "./icons";
-import { Skeleton } from "./skeleton";
+import { useStytchUser } from "@stytch/nextjs";
 
 interface HeaderProps {
   wallet: {
@@ -18,15 +14,7 @@ interface HeaderProps {
 }
 export function Header({ wallet }: HeaderProps) {
   const [darkMode, setDarkMode] = useState(true);
-  const session = null;
-  console.log({ session });
-
-  const { data } = useQuery({
-    queryKey: ["test-data"],
-    queryFn: async () => await getSampleDataServer(),
-  });
-
-  // console.log({ data });
+  const { user } = useStytchUser();
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -46,20 +34,9 @@ export function Header({ wallet }: HeaderProps) {
           onCheckedChange={(checked) => setDarkMode(checked)}
         />
       </div>
-
-      {/* {session && session?.user ? (
-        <Avatar>
-          <AvatarImage
-            className="object-cover"
-            src={session.user.image as string}
-          />
-          <AvatarFallback>{session.user?.name?.[0] ?? "Gauth"}</AvatarFallback>
-        </Avatar>
-      ) : status === "loading" ? (
-        <Skeleton className="rounded-full w-[40px] h-[40px]" />
-      ) : (
-        <Profile className="w-[40px]" />
-      )} */}
+      {user && user.emails ? (
+        <Typography variant="tag">{user.emails[0].email}</Typography>
+      ) : null}
     </header>
   );
 }

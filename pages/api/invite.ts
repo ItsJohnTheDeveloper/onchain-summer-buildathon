@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import Cookies from "cookies";
 import * as stytch from "stytch";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -25,10 +27,9 @@ export default async function handler(
       session_jwt: stytchSessionJWT,
     });
 
-    const base = "http://localhost:3000";
-    const authUrl = new URL(`${base}/auth`);
-    const registerURL = new URL(`${base}/register`);
-    const destinationUrl = new URL(`${base}/`);
+    const authUrl = new URL(`${BASE_URL}/auth`);
+    const registerURL = new URL(`${BASE_URL}/register`);
+    const destinationUrl = new URL(`${BASE_URL}/`);
     registerURL.searchParams.set("redirect", destinationUrl.toString());
     authUrl.searchParams.set("redirect", registerURL.toString());
 
@@ -37,12 +38,11 @@ export default async function handler(
 
     await stytchClient.magicLinks.email.invite({
       email: req.body.email!,
-
-      // invite_magic_link_url: "http://localhost:3000/authenticate?redirect="
+      invite_magic_link_url: magicLinkUrl,
     });
-    res.status(200).json({ message: "Invite sent" });
+    return res.status(200).json({ message: "Invite sent" });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ errorString: "Internal Server Error" });
+    return res.status(500).json({ errorString: "Internal Server Error" });
   }
 }

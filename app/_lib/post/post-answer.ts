@@ -11,14 +11,11 @@ type PostAnswerData = {
 export const postAnswer = async (data: PostAnswerData) => {
   // todo - check user is authenticated
   const supabase = createServer();
-  try {
-    const answer = await supabase.from("Answer").insert([data]);
+  const answer = await supabase.from("answer").insert([data]).select().single();
 
-    if (answer.error) {
-      throw new Error("There was an error creating answer.");
-    }
-    return answer;
-  } catch (e) {
-    console.error(e);
+  if (answer.error) {
+    console.error(answer.error);
+    throw new Error("There was an error creating answer.");
   }
+  return answer.data;
 };

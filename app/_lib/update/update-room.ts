@@ -13,14 +13,15 @@ type UpdateRoomData = {
 export const updateRoom = async (data: UpdateRoomData) => {
   // todo - check user is authenticated
   const supabase = createServer();
-  try {
-    const room = await supabase.from("Room").update(data).eq("id", data.id);
+  const room = await supabase
+    .from("room")
+    .update(data)
+    .eq("id", data.id)
+    .single();
 
-    if (room.error) {
-      throw new Error("There was an error updating the room.");
-    }
-    return room;
-  } catch (e) {
-    console.error(e);
+  if (room.error) {
+    console.error(room.error);
+    throw new Error("There was an error updating the room.");
   }
+  return room.data;
 };
