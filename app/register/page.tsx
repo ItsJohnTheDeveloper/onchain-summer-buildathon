@@ -26,7 +26,7 @@ export default function Register() {
     // @ts-expect-error - session type is wrong
     session?.authentication_factors?.[0]?.email_factor?.email_address ?? "";
 
-  console.log({ redirectURL, userId });
+  console.log({ redirectURL, userId, sessionEmail });
 
   const mutationPostUser = useMutation({
     mutationKey: ["user"],

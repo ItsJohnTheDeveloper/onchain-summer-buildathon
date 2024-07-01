@@ -10,14 +10,14 @@ export type PostUserData = {
 
 export const postUser = async (data: PostUserData) => {
   // todo - check user is authenticated
-  const { userId, walletAddress } = data;
-  if (!userId || !walletAddress) {
+  const { userId, walletAddress, email } = data;
+  if (!userId || !walletAddress || !email) {
     throw new Error("No UserID or Wallet Address found.");
   }
   const supabase = createServer();
   const user = await supabase
     .from("user")
-    .insert({ walletAddress, userId })
+    .insert({ walletAddress, userId, email })
     .select()
     .single();
 
