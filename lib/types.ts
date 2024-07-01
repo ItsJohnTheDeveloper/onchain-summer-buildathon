@@ -1,9 +1,8 @@
 type Answer = {
-  id: number;
   created_at: string;
   userId: string;
   answer: string;
-  roomId: string;
+  roomId: number;
 };
 
 type Room = {
@@ -23,4 +22,5 @@ type User = {
   created_at: string;
   userId: string;
   walletAddress: string;
+  email: string;
 };

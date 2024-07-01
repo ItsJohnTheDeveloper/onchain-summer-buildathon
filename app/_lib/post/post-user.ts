@@ -5,6 +5,7 @@ import { createServer } from "@/utils/supabase/server";
 export type PostUserData = {
   userId: string;
   walletAddress: string;
+  email: string;
 };
 
 export const postUser = async (data: PostUserData) => {

@@ -15,6 +15,7 @@ import { PostAnswerData, postAnswer } from "@/app/_lib/post/post-answer";
 import { useEffect } from "react";
 import { getRoomAnswerByUserId } from "@/app/_lib/get/get-room-answer-by-user-id";
 import { UpdateRoomData, updateRoom } from "@/app/_lib/update/update-room";
+import { Winner } from "./winner";
 
 type FormValues = {
   users: string[];
@@ -199,6 +200,10 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
 
         {room.status === "awaiting-results" ? (
           <Typography variant="h4">Results are being calculated...</Typography>
+        ) : null}
+
+        {room.status === "complete" ? (
+          <Winner winnerUserId={room.winner} />
         ) : null}
       </form>
     </div>

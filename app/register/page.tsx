@@ -20,6 +20,11 @@ export default function Register() {
   const { session } = useStytchSession();
   const userId = session?.user_id ?? "";
   const redirectURL = searchParams?.get("redirect") ?? "/";
+
+  const sessionEmail =
+    // @ts-expect-error - session type is wrong
+    session?.authentication_factors?.[0]?.email_factor?.email_address ?? "";
+
   console.log({ redirectURL, userId });
 
   const mutationPostUser = useMutation({
@@ -66,6 +71,7 @@ export default function Register() {
       await mutationPostUser.mutateAsync({
         userId,
         walletAddress: wallet.address,
+        email: sessionEmail,
       } as PostUserData);
 
       console.log({ redirectURL });
