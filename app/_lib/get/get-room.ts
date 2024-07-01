@@ -2,13 +2,15 @@
 
 import { createServer } from "@/utils/supabase/server";
 
-export const getRoom = async (id: string) => {
+export const getRoom = async (id: number) => {
   const supabase = createServer();
-  const room = await supabase.from("room").select().eq("id", id).single();
+  const room = await supabase.from("room").select("*").eq("id", id).single();
+  console.log({ room });
   if (room.error) {
     console.error(room.error);
     throw new Error("Room not found.");
   }
 
-  return room.data;
+  const data: Room = room.data;
+  return data;
 };

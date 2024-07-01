@@ -8,7 +8,7 @@ export interface InputProps
 
 const Input = React.forwardRef<
   HTMLInputElement,
-  InputProps & { label: string }
+  InputProps & { label?: string }
 >(({ className, type, ...props }, ref) => {
   return (
     <>

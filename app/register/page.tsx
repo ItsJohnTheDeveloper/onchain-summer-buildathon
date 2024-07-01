@@ -20,16 +20,18 @@ export default function Register() {
   const { session } = useStytchSession();
   const userId = session?.user_id ?? "";
   const redirectURL = searchParams?.get("redirect") ?? "/";
+  console.log({ redirectURL, userId });
 
   const mutationPostUser = useMutation({
+    mutationKey: ["user"],
     mutationFn: postUser,
   });
-  const { data, isLoading } = useQuery({
+  const { data: userData, isLoading } = useQuery({
     queryKey: ["user", userId],
     queryFn: async () => await getUser(userId),
   });
 
-  console.log({ user: data });
+  console.log({ userData });
 
   if (isLoading) {
     return <Skeleton className="self-center h-96 w-full md:max-w-lg" />;
@@ -41,7 +43,7 @@ export default function Register() {
     );
   }
 
-  if (data) {
+  if (userData) {
     // if a user exists, they are already registered so redirect them to the room/create page
     console.log({ redirectURL });
     router.push(redirectURL);
@@ -62,7 +64,7 @@ export default function Register() {
         { id: userId, jwt: sessionJWT },
         "polygon-amoy"
       );
-
+      console.log("done creating wallet... ", wallet.address);
       await mutationPostUser.mutateAsync({
         userId,
         walletAddress: wallet.address,

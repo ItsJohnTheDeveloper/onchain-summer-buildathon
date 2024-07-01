@@ -39,11 +39,13 @@ const Authenticate = () => {
       return;
     }
     if (user) {
-      const redirect = searchParams?.get("redirect");
+      const redirectURL = searchParams?.get("redirect");
+      console.log({ redirectURL });
+
       // if (!redirect) {
       //   throw new Error("No redirect URL found in query parameters");
       // }
-      router.replace(redirect || "/register");
+      router.replace(redirectURL || "/register");
     }
   }, [router, user, isInitialized]);
 

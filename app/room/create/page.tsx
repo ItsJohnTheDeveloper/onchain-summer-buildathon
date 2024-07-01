@@ -19,6 +19,7 @@ export default function CreateRoom() {
   const { control, handleSubmit } = useForm<FormValues>();
 
   const mutation = useMutation({
+    mutationKey: ["room"],
     mutationFn: postRoom,
   });
 

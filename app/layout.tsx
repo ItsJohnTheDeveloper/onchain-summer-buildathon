@@ -7,9 +7,9 @@ import { Header } from "@/components/header";
 
 export const metadata = {
   metadataBase: new URL("https://recovery.vercel.app"),
-  title: "Social Recovery",
-  description:
-    "Social Recovery allows wallet holders to recover their funds by asking friends to help them via Passkeys.",
+  title: "Onchain Buildathon - The Room",
+  // description:
+  //   "Social Recovery allows wallet holders to recover their funds by asking friends to help them via Passkeys.",
 };
 
 const inter = Inter({

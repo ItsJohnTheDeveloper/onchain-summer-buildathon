@@ -2,12 +2,13 @@
 
 import { createServer } from "@/utils/supabase/server";
 
-type UpdateRoomData = {
-  id: string;
+export type UpdateRoomData = {
+  roomId: number;
   question?: string;
   winner?: string;
   users?: string[];
   transactionId?: string;
+  invitations?: string[];
 };
 
 export const updateRoom = async (data: UpdateRoomData) => {
@@ -16,7 +17,7 @@ export const updateRoom = async (data: UpdateRoomData) => {
   const room = await supabase
     .from("room")
     .update(data)
-    .eq("id", data.id)
+    .eq("id", data.roomId)
     .single();
 
   if (room.error) {

@@ -4,6 +4,8 @@ import React from "react";
 import { StytchLogin } from "@stytch/nextjs";
 import { Products } from "@stytch/vanilla-js";
 
+//http://localhost:3000/authenticate?redirect=http%3A%2F%2Flocalhost%3A3000%2Fregister%3Fredirect%3Dhttp%253A%252F%252Flocalhost%253A3000%252F
+
 /*
  * Login configures and renders the StytchLogin component which is a prebuilt UI component for auth powered by Stytch.
  *

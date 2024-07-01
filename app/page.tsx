@@ -1,7 +1,9 @@
 "use client";
+import { Button } from "@/components/button";
 import { Login } from "@/components/stytch/login";
 import { Typography } from "@/components/typography";
 import { useStytchSession } from "@stytch/nextjs";
+import Link from "next/link";
 
 export const preferredRegion = "home";
 export const dynamic = "force-dynamic";
@@ -15,12 +17,15 @@ export default function Home() {
         <div className="h-3" />
         {/* <HomepageStepper /> */}
 
-        {!session ? (
+        {session ? (
+          <Link href="/room/create">
+            <Button>Create a Room</Button>
+          </Link>
+        ) : (
           <div className="max-w-lg">
             <Login />
           </div>
-        ) : null}
-        {/* TODO add create room button */}
+        )}
       </div>
     </main>
   );

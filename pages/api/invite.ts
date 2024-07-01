@@ -8,6 +8,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const body = JSON.parse(req.body);
+
+  console.log({ email: body.email });
+
+  const roomId = body?.roomId;
   try {
     const cookies = new Cookies(req, res);
     const stytchSessionJWT = cookies.get("stytch_session_jwt");
@@ -27,9 +32,11 @@ export default async function handler(
       session_jwt: stytchSessionJWT,
     });
 
-    const authUrl = new URL(`${BASE_URL}/auth`);
+    const authUrl = new URL(`${BASE_URL}/authenticate`);
     const registerURL = new URL(`${BASE_URL}/register`);
-    const destinationUrl = new URL(`${BASE_URL}/`);
+    const destinationUrl = new URL(
+      `${BASE_URL}/${roomId ? `room/${roomId}` : ""}`
+    );
     registerURL.searchParams.set("redirect", destinationUrl.toString());
     authUrl.searchParams.set("redirect", registerURL.toString());
 
@@ -37,7 +44,7 @@ export default async function handler(
     console.log({ magicLinkUrl });
 
     await stytchClient.magicLinks.email.invite({
-      email: req.body.email!,
+      email: body.email!,
       invite_magic_link_url: magicLinkUrl,
     });
     return res.status(200).json({ message: "Invite sent" });
