@@ -8,7 +8,7 @@ export type UpdateRoomData = {
   winner?: string;
   users?: string[];
   transactionId?: string;
-  invitations?: string[];
+  participants?: string[];
 };
 
 export const updateRoom = async (data: UpdateRoomData) => {

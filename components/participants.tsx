@@ -47,15 +47,13 @@ export const Participants = ({ room }: { room: Room }) => {
       console.log(`Successfully invited ${email} to the room`);
       const mutatedData: UpdateRoomData = {
         roomId: room.id,
-        invitations: [email],
+        participants: [email],
       };
-      if (room.invitations) {
-        mutatedData.invitations = [...room.invitations, email];
+      if (room.participants) {
+        mutatedData.participants = [...room.participants, email];
       }
 
       await roomMutation.mutateAsync(mutatedData);
-
-      // add userInvited to invitations fieldon room
     } catch (e) {
       console.error(e);
     }

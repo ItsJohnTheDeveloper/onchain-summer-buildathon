@@ -24,10 +24,14 @@ export default function CreateRoom() {
   });
 
   const onSubmit = async (data: FormValues) => {
+    const sessionEmail =
+      // @ts-expect-error - session type is wrong
+      session?.authentication_factors?.[0]?.email_factor?.email_address ?? "";
     try {
       const mutateData: PostRoomData = {
         question: data.question,
         creator: session?.user_id ?? "",
+        participants: [sessionEmail],
       };
       const room = await mutation.mutateAsync(mutateData);
       console.log("successfully created room");

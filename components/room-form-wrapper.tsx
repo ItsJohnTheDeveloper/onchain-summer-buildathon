@@ -70,7 +70,7 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
 
   const isRoomCreator = room?.creator === user?.userId;
   const canSubmitRoom = allAnswers.length > 1 && isRoomCreator;
-  const invitations = room?.invitations ?? [];
+  const participants = room?.participants ?? [];
 
   useEffect(() => {
     if (myAnswer) {
@@ -84,7 +84,7 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
     return <div>Loading...</div>;
   }
 
-  if (!room || (!isRoomCreator && !invitations.includes(sessionEmail))) {
+  if (!room || (!isRoomCreator && !participants.includes(sessionEmail))) {
     return (
       <Error
         statusCode={404}
@@ -124,9 +124,9 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
         {isRoomCreator ? <Participants room={room} /> : null}
 
         <div className="h-4" />
-        {invitations.map((invitee) => (
-          <div key={invitee} className="flex items-center">
-            <Typography variant="body">{invitee}</Typography>
+        {participants.map((participant) => (
+          <div key={participant} className="flex items-center">
+            <Typography variant="body">{participant}</Typography>
           </div>
         ))}
 

@@ -14,7 +14,7 @@ type Room = {
   creator: string;
   users: string[];
   transactionId: string;
-  invitations: string[];
+  participants: string[];
   status: "pending" | "awaiting-results" | "complete";
 };
 
