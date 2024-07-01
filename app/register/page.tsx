@@ -14,9 +14,20 @@ import { getUser } from "../_lib/get/get-user";
 import { Skeleton } from "@/components/skeleton";
 import { useState } from "react";
 
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
+
 export default function Register() {
-  const searchParams = useSearchParams();
+  let searchParams;
+
+  if (typeof window !== "undefined") {
+    searchParams = useSearchParams();
+  }
   const router = useRouter();
+
+  // const searchParams = {
+  //   get: (val: string) => val,
+  // };
 
   const { session } = useStytchSession();
   const userId = session?.user_id ?? "";

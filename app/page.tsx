@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <main className="container">
       <div className="flex items-center mt-16 flex-col gap-4">
-        <Typography variant="h1">Onchain Summer Buildathon project</Typography>
+        <Typography variant="h1">Verdict</Typography>
         <div className="h-3" />
 
         {session ? (
