@@ -14,6 +14,7 @@ import { getAnswersByRoom } from "@/app/_lib/get/get-answers-by-room";
 import { PostAnswerData, postAnswer } from "@/app/_lib/post/post-answer";
 import { useEffect } from "react";
 import { getRoomAnswerByUserId } from "@/app/_lib/get/get-room-answer-by-user-id";
+import { UpdateRoomData, updateRoom } from "@/app/_lib/update/update-room";
 
 type FormValues = {
   users: string[];
@@ -68,6 +69,19 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
     },
   });
 
+  console.log({ room });
+
+  const roomMutation = useMutation({
+    mutationKey: ["room", roomId],
+    mutationFn: updateRoom,
+    onSuccess: async () => {
+      // invalidate cache
+      await queryClient.setQueryData(["room", roomId], (oldData: any) => {
+        return { ...oldData, status: "awaiting-results" };
+      });
+    },
+  });
+
   const isRoomCreator = room?.creator === user?.userId;
   const canSubmitRoom = allAnswers.length > 1 && isRoomCreator;
   const participants = room?.participants ?? [];
@@ -109,6 +123,12 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
   const handleOnSubmitRoom = async () => {
     console.log("submitting room");
     // todo
+    const mutateData: UpdateRoomData = {
+      roomId: room.id,
+      status: "awaiting-results",
+    };
+    // update the status of the room
+    await roomMutation.mutateAsync(mutateData);
   };
 
   return (
@@ -156,7 +176,7 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
         ) : null}
         <div className="h-16" />
 
-        {isRoomCreator ? (
+        {isRoomCreator && room.status === "pending" ? (
           <>
             <Typography variant="h3">Submit to AI:</Typography>
             <div className="h-6" />
@@ -168,13 +188,17 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
             ) : null}
 
             <Button
-              variant="ghost"
+              type="button"
               disabled={!canSubmitRoom}
               onClick={handleOnSubmitRoom}
             >
               Submit
             </Button>
           </>
+        ) : null}
+
+        {room.status === "awaiting-results" ? (
+          <Typography variant="h4">Results are being calculated...</Typography>
         ) : null}
       </form>
     </div>

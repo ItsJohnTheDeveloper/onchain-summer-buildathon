@@ -19,7 +19,7 @@ export default function Home() {
 
         {session ? (
           <Link href="/room/create">
-            <Button>Create a Room</Button>
+            <Button type="button">Create a Room</Button>
           </Link>
         ) : (
           <div className="max-w-lg">

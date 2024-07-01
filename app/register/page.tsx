@@ -83,7 +83,7 @@ export default function Register() {
       <Typography className="py-6">
         To proceed to room, please register your Passkey.
       </Typography>
-      <Button className="max-w-xs" onClick={handleOnRegister}>
+      <Button type="button" className="max-w-xs" onClick={handleOnRegister}>
         Register
       </Button>
     </div>

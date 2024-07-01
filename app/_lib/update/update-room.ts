@@ -9,6 +9,7 @@ export type UpdateRoomData = {
   users?: string[];
   transactionId?: string;
   participants?: string[];
+  status?: Room["status"];
 };
 
 export const updateRoom = async (data: UpdateRoomData) => {
