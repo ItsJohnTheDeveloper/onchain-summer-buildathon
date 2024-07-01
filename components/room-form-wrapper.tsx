@@ -3,7 +3,7 @@
 import { getRoom } from "@/app/_lib/get/get-room";
 import { getUser } from "@/app/_lib/get/get-user";
 import { useStytchSession } from "@stytch/nextjs";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Error from "next/error";
 import { Controller, useForm } from "react-hook-form";
 import { Typography } from "./typography";
@@ -23,6 +23,8 @@ type FormValues = {
 export default function RoomFormWrapper({ roomId }: { roomId: number }) {
   const { control, watch, setValue } = useForm<FormValues>();
   const { session } = useStytchSession();
+  const queryClient = useQueryClient();
+
   const sessionEmail =
     // @ts-expect-error - session type is wrong
     session?.authentication_factors?.[0]?.email_factor?.email_address ?? "";
@@ -56,6 +58,14 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
   const answerMutation = useMutation({
     mutationKey: ["answer"],
     mutationFn: postAnswer,
+    onSuccess: async () => {
+      // invalidate cache
+      await queryClient.invalidateQueries([
+        "answer",
+        room?.id,
+        user?.userId,
+      ] as any);
+    },
   });
 
   const isRoomCreator = room?.creator === user?.userId;
@@ -64,11 +74,13 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
 
   useEffect(() => {
     if (myAnswer) {
-      setValue("answer", myAnswer);
+      setValue("answer", myAnswer.answer);
     }
   }, [roomId, myAnswer]);
 
-  if (isLoadingRoom || isLoadingUser || isLoadingAnswers || isLoadingMyAnswer) {
+  const isLoading =
+    isLoadingRoom || isLoadingUser || isLoadingAnswers || isLoadingMyAnswer;
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -96,6 +108,7 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
 
   const handleOnSubmitRoom = async () => {
     console.log("submitting room");
+    // todo
   };
 
   return (
@@ -143,22 +156,26 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
         ) : null}
         <div className="h-16" />
 
-        <Typography variant="h3">Submit to AI:</Typography>
-        <div className="h-6" />
-        {!canSubmitRoom ? (
-          <Typography variant="body" className="text-destructive">
-            You must have at least 1 more participant submit an answer before
-            submitting to AI.
-          </Typography>
-        ) : null}
+        {isRoomCreator ? (
+          <>
+            <Typography variant="h3">Submit to AI:</Typography>
+            <div className="h-6" />
+            {!canSubmitRoom ? (
+              <Typography variant="body" className="text-destructive">
+                You must have at least 1 more participant submit an answer
+                before submitting to AI.
+              </Typography>
+            ) : null}
 
-        <Button
-          variant="ghost"
-          disabled={!canSubmitRoom}
-          onClick={handleOnSubmitRoom}
-        >
-          Submit
-        </Button>
+            <Button
+              variant="ghost"
+              disabled={!canSubmitRoom}
+              onClick={handleOnSubmitRoom}
+            >
+              Submit
+            </Button>
+          </>
+        ) : null}
       </form>
     </div>
   );
