@@ -61,8 +61,7 @@ export default function Register() {
   const handleOnRegister = async () => {
     setIsLoadingRegistration(true);
     const CrossmintSDK = SmartWalletSDK.init({
-      clientApiKey:
-        "ck_staging_6CDH3rLS3CrViDpE4YwN1w8AZddxJYzeTsBzEVXQjsP8Uh9rKAr5iStYAnAiK82tJNK1g3wKJkhFaSmS4asERMBtgGg28AKreuhPk4Wu2JNf6eM5Xj9CE1mS6a9ckTMddjZNnCxgvMMxZmn7Qmc2Ab39mY7cn68U5ra8tTHgcGX1K1Mdw45bdTPK3EwAoeos3hupMxRxiok9onLGYGc3F2ST",
+      clientApiKey: process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_KEY!,
     });
     const sessionJWT = Cookies.get("stytch_session_jwt");
 

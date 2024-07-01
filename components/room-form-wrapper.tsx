@@ -160,7 +160,9 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
         <div className="h-12" />
         <Typography variant="h3">Participants:</Typography>
 
-        {isRoomCreator ? <Participants room={room} /> : null}
+        {isRoomCreator && room.status === "pending" ? (
+          <Participants room={room} />
+        ) : null}
 
         <div className="h-4" />
         {participants.map((email) => {
