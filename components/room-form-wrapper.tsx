@@ -16,6 +16,8 @@ import { useEffect } from "react";
 import { getRoomAnswerByUserId } from "@/app/_lib/get/get-room-answer-by-user-id";
 import { UpdateRoomData, updateRoom } from "@/app/_lib/update/update-room";
 import { Winner } from "./winner";
+import { Check, Hourglass } from "./icons";
+import { Skeleton } from "./skeleton";
 
 type FormValues = {
   users: string[];
@@ -31,12 +33,12 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
     // @ts-expect-error - session type is wrong
     session?.authentication_factors?.[0]?.email_factor?.email_address ?? "";
 
-  const { data: room, isLoading: isLoadingRoom } = useQuery({
+  const { data: room, isInitialLoading: isInitialLoadingRoom } = useQuery({
     queryKey: ["room", roomId],
     queryFn: async () => await getRoom(roomId),
     refetchInterval: 5000,
   });
-  const { data: user, isLoading: isLoadingUser } = useQuery({
+  const { data: user, isInitialLoading: isInitialLoadingUser } = useQuery({
     queryKey: ["user", session?.user_id],
     queryFn: async () => {
       if (session) {
@@ -46,21 +48,32 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
     refetchInterval: 5000,
   });
 
-  const { data: allAnswers, isLoading: isLoadingAnswers } = useQuery({
-    queryKey: ["answers", roomId],
-    queryFn: async () => await getAnswersByRoom(roomId),
+  const { data: allAnswers, isInitialLoading: isInitialLoadingAnswers } =
+    useQuery({
+      queryKey: ["answers", roomId],
+      queryFn: async () => await getAnswersByRoom(roomId),
+      initialData: [],
+      refetchInterval: 5000,
+    });
+
+  const myAnswer = allAnswers.find((answer) => answer.userId === user?.userId);
+  const participantUserIds = allAnswers.map((answer) => answer.userId);
+
+  const { data: participantUsers } = useQuery({
     initialData: [],
-    refetchInterval: 5000,
-  });
-  const { data: myAnswer, isLoading: isLoadingMyAnswer } = useQuery({
-    queryKey: ["answer", room?.id, user?.userId],
+    queryKey: ["participantUsers", participantUserIds],
     queryFn: async () => {
-      if (room?.id && user?.userId) {
-        return await getRoomAnswerByUserId(String(room.id), user.userId);
-      }
+      return await Promise.all(
+        participantUserIds.map(async (userId) => {
+          const user = await getUser(userId);
+          const answer = allAnswers.find((a) => a.userId === userId);
+          return { user, hasAnswered: !!answer };
+        })
+      );
     },
     refetchInterval: 5000,
   });
+
   const answerMutation = useMutation({
     mutationKey: ["answer"],
     mutationFn: postAnswer,
@@ -74,7 +87,7 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
     },
   });
 
-  console.log({ room });
+  console.log({ room, participantUsers, participantUserIds });
 
   const roomMutation = useMutation({
     mutationKey: ["room", roomId],
@@ -97,10 +110,14 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
     }
   }, [roomId, myAnswer]);
 
-  const isLoading =
-    isLoadingRoom || isLoadingUser || isLoadingAnswers || isLoadingMyAnswer;
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (isInitialLoadingRoom || isInitialLoadingUser || isInitialLoadingAnswers) {
+    return (
+      <div className="container flex flex-col p-8">
+        <Skeleton className="h-4 w-40" />
+        <div className="h-4" />
+        <Skeleton className="h-10 w-full max-w-6xl" />
+      </div>
+    );
   }
 
   if (!room || (!isRoomCreator && !participants.includes(sessionEmail))) {
@@ -146,11 +163,21 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
         {isRoomCreator ? <Participants room={room} /> : null}
 
         <div className="h-4" />
-        {participants.map((participant) => (
-          <div key={participant} className="flex items-center">
-            <Typography variant="body">{participant}</Typography>
-          </div>
-        ))}
+        {participants.map((email) => {
+          const participant = participantUsers.find(
+            (participant) => participant.user?.email === email
+          );
+          return (
+            <div key={email} className="flex items-center">
+              <Typography variant="body">{email}</Typography>
+              {participant?.hasAnswered ? (
+                <Check className="h-5 mx-2 text-primary" />
+              ) : (
+                <Hourglass className="h-5 mx-2 text-[#af7f0e]" />
+              )}
+            </div>
+          );
+        })}
 
         <div className="h-8" />
         <Typography variant="h3">My Answer:</Typography>
@@ -169,9 +196,9 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
         {!myAnswer ? (
           <Button
             type="button"
-            variant="ghost"
+            variant="secondary"
             onClick={onSubmitAnswer}
-            className="mt-1"
+            className="mt-5"
           >
             Add answer
           </Button>
@@ -188,6 +215,7 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
                 before submitting to AI.
               </Typography>
             ) : null}
+            <div className="h-6" />
 
             <Button
               type="button"

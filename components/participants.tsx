@@ -6,35 +6,23 @@ import { type UpdateRoomData, updateRoom } from "@/app/_lib/update/update-room";
 import { getUserByEmail } from "@/app/_lib/get/get-user-by-email";
 
 export const Participants = ({ room }: { room: Room }) => {
-  const [items, setItems] = useState<{ locked: boolean; text: string }[]>([]);
-  const [newItem, setNewItem] = useState("");
+  const [newEmail, setNewEmail] = useState("");
 
   const queryClient = useQueryClient();
 
   const roomMutation = useMutation({
     mutationKey: ["room", room.id],
     mutationFn: updateRoom,
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       // invalidate cache
-      await queryClient.invalidateQueries(["room", room.id] as any);
+      await queryClient.setQueryData(["room", room.id], data);
+      setNewEmail("");
     },
   });
 
-  const addItem = () => {
-    if (newItem.trim() !== "") {
-      setItems([...items, { text: newItem, locked: false }]);
-      setNewItem("");
-    }
-  };
-
-  const sendInvitation = async (index: number) => {
-    setItems(
-      items.map((item, i) => (i === index ? { ...item, locked: true } : item))
-    );
-
+  const sendInvitation = async () => {
     try {
-      // TODO validate text is valid email.
-      const email = items[index].text;
+      const email = newEmail.trim();
 
       console.log(`Inviting email ${email} to the room`);
 
@@ -68,51 +56,21 @@ export const Participants = ({ room }: { room: Room }) => {
   };
 
   return (
-    <div className="py-4">
-      <div className="mb-4">
-        <Input
-          className="border p-2 mr-2"
-          label="Add a new participant"
-          value={newItem}
-          onChange={(e) => setNewItem(e.target.value)}
-          placeholder="Participant's email address"
-        />
-        <Button
-          type="button"
-          onClick={addItem}
-          variant="ghost"
-          className="mt-1"
-        >
-          Add
-        </Button>
-      </div>
-      <ul>
-        {items.map((item, index) => (
-          <li key={index} className="flex items-center justify-between mb-2">
-            <span className={item.locked ? "line-through" : ""}>
-              {item.text}
-            </span>
-            <div>
-              {!item.locked && (
-                <Button
-                  onClick={() => sendInvitation(index)}
-                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 mr-2 rounded"
-                >
-                  Invite
-                </Button>
-              )}
-              {/* {!item.locked && (
-                <Button
-                  onClick={() => removeItem(index)}
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
-                >
-                  Remove
-                </Button>
-              )} */}
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div className="py-4 flex justify-between">
+      <Input
+        className="border p-2 mr-2"
+        value={newEmail}
+        onChange={(e) => setNewEmail(e.target.value)}
+        placeholder="Add a new participant"
+      />
+      <Button
+        type="button"
+        onClick={sendInvitation}
+        variant="secondary"
+        className="rounded-full text-2xl p-3"
+      >
+        +
+      </Button>
     </div>
   );
 };

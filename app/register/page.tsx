@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/button";
-import { Lock } from "@/components/icons";
+import { Lock, Spinner } from "@/components/icons";
 import { Typography } from "@/components/typography";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SmartWalletSDK } from "@crossmint/client-sdk-aa-passkeys-beta";
@@ -12,6 +12,7 @@ import { PostUserData, postUser } from "../_lib/post/post-user";
 import NextError from "next/error";
 import { getUser } from "../_lib/get/get-user";
 import { Skeleton } from "@/components/skeleton";
+import { useState } from "react";
 
 export default function Register() {
   const searchParams = useSearchParams();
@@ -35,9 +36,14 @@ export default function Register() {
     queryKey: ["user", userId],
     queryFn: async () => await getUser(userId),
   });
+  const [isLoadingRegistration, setIsLoadingRegistration] = useState(false);
 
   if (isLoading) {
-    return <Skeleton className="self-center h-96 w-full md:max-w-lg" />;
+    return (
+      <div className="container flex flex-col p-8">
+        <Skeleton className="h-10 w-full max-w-6xl" />
+      </div>
+    );
   }
 
   if (!userId) {
@@ -53,6 +59,7 @@ export default function Register() {
   }
 
   const handleOnRegister = async () => {
+    setIsLoadingRegistration(true);
     const CrossmintSDK = SmartWalletSDK.init({
       clientApiKey:
         "ck_staging_6CDH3rLS3CrViDpE4YwN1w8AZddxJYzeTsBzEVXQjsP8Uh9rKAr5iStYAnAiK82tJNK1g3wKJkhFaSmS4asERMBtgGg28AKreuhPk4Wu2JNf6eM5Xj9CE1mS6a9ckTMddjZNnCxgvMMxZmn7Qmc2Ab39mY7cn68U5ra8tTHgcGX1K1Mdw45bdTPK3EwAoeos3hupMxRxiok9onLGYGc3F2ST",
@@ -80,6 +87,8 @@ export default function Register() {
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setIsLoadingRegistration(false);
     }
   };
 
@@ -89,8 +98,13 @@ export default function Register() {
       <Typography className="py-6">
         To proceed to room, please register your Passkey.
       </Typography>
-      <Button type="button" className="max-w-xs" onClick={handleOnRegister}>
-        Register
+      <Button
+        type="button"
+        className="max-w-xs min-w-32"
+        disabled={isLoadingRegistration}
+        onClick={handleOnRegister}
+      >
+        {isLoadingRegistration ? <Spinner /> : "Register"}
       </Button>
     </div>
   );
