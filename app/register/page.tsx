@@ -31,8 +31,6 @@ export default function Register() {
     queryFn: async () => await getUser(userId),
   });
 
-  console.log({ userData });
-
   if (isLoading) {
     return <Skeleton className="self-center h-96 w-full md:max-w-lg" />;
   }

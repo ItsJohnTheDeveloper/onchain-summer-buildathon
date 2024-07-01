@@ -1,16 +1,22 @@
 import { useState } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
-import { useMutation } from "@tanstack/react-query";
-import { UpdateRoomData, updateRoom } from "@/app/_lib/update/update-room";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type UpdateRoomData, updateRoom } from "@/app/_lib/update/update-room";
 
 export const Participants = ({ room }: { room: Room }) => {
   const [items, setItems] = useState<{ locked: boolean; text: string }[]>([]);
   const [newItem, setNewItem] = useState("");
 
+  const queryClient = useQueryClient();
+
   const roomMutation = useMutation({
-    mutationKey: ["room"],
+    mutationKey: ["room", room.id],
     mutationFn: updateRoom,
+    onSuccess: async () => {
+      // invalidate cache
+      await queryClient.invalidateQueries(["room", room.id] as any);
+    },
   });
 
   const addItem = () => {
@@ -41,8 +47,11 @@ export const Participants = ({ room }: { room: Room }) => {
       console.log(`Successfully invited ${email} to the room`);
       const mutatedData: UpdateRoomData = {
         roomId: room.id,
-        invitations: [...room.invitations, email],
+        invitations: [email],
       };
+      if (room.invitations) {
+        mutatedData.invitations = [...room.invitations, email];
+      }
 
       await roomMutation.mutateAsync(mutatedData);
 

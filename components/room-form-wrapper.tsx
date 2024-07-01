@@ -26,7 +26,6 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
   const sessionEmail =
     // @ts-expect-error - session type is wrong
     session?.authentication_factors?.[0]?.email_factor?.email_address ?? "";
-  console.log({ sessionEmail });
 
   const { data: room, isLoading: isLoadingRoom } = useQuery({
     queryKey: ["room", roomId],
@@ -63,13 +62,9 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
   const canSubmitRoom = allAnswers.length > 1 && isRoomCreator;
   const invitations = room?.invitations ?? [];
 
-  console.log({ allAnswers, myAnswer, invitations });
-
   useEffect(() => {
     if (myAnswer) {
-      // setValue("answer", myAnswer)
-
-      console.log({ myAnswer });
+      setValue("answer", myAnswer);
     }
   }, [roomId, myAnswer]);
 
@@ -77,12 +72,7 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
     return <div>Loading...</div>;
   }
 
-  if (
-    !room ||
-    (!isRoomCreator &&
-      !room.users?.includes(user?.userId!) &&
-      !invitations.includes(sessionEmail))
-  ) {
+  if (!room || (!isRoomCreator && !invitations.includes(sessionEmail))) {
     return (
       <Error
         statusCode={404}
@@ -124,9 +114,6 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
         {invitations.map((invitee) => (
           <div key={invitee} className="flex items-center">
             <Typography variant="body">{invitee}</Typography>
-            <Button variant="ghost" className="ml-2">
-              Resend
-            </Button>
           </div>
         ))}
 

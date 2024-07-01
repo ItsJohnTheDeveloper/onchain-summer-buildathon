@@ -16,8 +16,9 @@ export const updateRoom = async (data: UpdateRoomData) => {
   const supabase = createServer();
   const room = await supabase
     .from("room")
-    .update(data)
+    .update({ ...data, roomId: undefined })
     .eq("id", data.roomId)
+    .select()
     .single();
 
   if (room.error) {
