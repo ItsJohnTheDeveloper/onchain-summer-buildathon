@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type UpdateRoomData, updateRoom } from "@/app/_lib/update/update-room";
+import { getUserByEmail } from "@/app/_lib/get/get-user-by-email";
 
 export const Participants = ({ room }: { room: Room }) => {
   const [items, setItems] = useState<{ locked: boolean; text: string }[]>([]);
@@ -36,14 +37,21 @@ export const Participants = ({ room }: { room: Room }) => {
       const email = items[index].text;
 
       console.log(`Inviting email ${email} to the room`);
-      const response = await fetch("/api/invite", {
-        method: "POST",
-        body: JSON.stringify({ roomId: room.id, email }),
-      });
 
-      if (!response.ok) {
-        throw new Error(`Failed to invite ${email} to the room`);
+      // 1. Send invitation to email if user not already in db.
+      // 2. if user is in db, add to room.
+      const participantUser = await getUserByEmail(email);
+      console.log({ participantUser });
+      if (!participantUser) {
+        const response = await fetch("/api/invite", {
+          method: "POST",
+          body: JSON.stringify({ roomId: room.id, email }),
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to invite ${email} to the room`);
+        }
       }
+
       console.log(`Successfully invited ${email} to the room`);
       const mutatedData: UpdateRoomData = {
         roomId: room.id,

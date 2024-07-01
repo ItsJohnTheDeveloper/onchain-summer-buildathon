@@ -34,6 +34,7 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
   const { data: room, isLoading: isLoadingRoom } = useQuery({
     queryKey: ["room", roomId],
     queryFn: async () => await getRoom(roomId),
+    refetchInterval: 5000,
   });
   const { data: user, isLoading: isLoadingUser } = useQuery({
     queryKey: ["user", session?.user_id],
@@ -42,12 +43,14 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
         return await getUser(session.user_id);
       }
     },
+    refetchInterval: 5000,
   });
 
   const { data: allAnswers, isLoading: isLoadingAnswers } = useQuery({
     queryKey: ["answers", roomId],
     queryFn: async () => await getAnswersByRoom(roomId),
     initialData: [],
+    refetchInterval: 5000,
   });
   const { data: myAnswer, isLoading: isLoadingMyAnswer } = useQuery({
     queryKey: ["answer", room?.id, user?.userId],
@@ -56,6 +59,7 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
         return await getRoomAnswerByUserId(String(room.id), user.userId);
       }
     },
+    refetchInterval: 5000,
   });
   const answerMutation = useMutation({
     mutationKey: ["answer"],
@@ -110,9 +114,6 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
 
   const onSubmitAnswer = async () => {
     const watchedAnswer = watch("answer");
-    // userId: string;
-    // answer: string;
-    // roomId: string;
     const data: PostAnswerData = {
       userId: user?.userId!,
       answer: watchedAnswer,
