@@ -15,7 +15,6 @@ export default function Home() {
       <div className="flex items-center mt-16 flex-col gap-4">
         <Typography variant="h1">Onchain Summer Buildathon project</Typography>
         <div className="h-3" />
-        {/* <HomepageStepper /> */}
 
         {session ? (
           <Link href="/room/create">

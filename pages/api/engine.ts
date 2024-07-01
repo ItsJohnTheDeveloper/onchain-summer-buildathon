@@ -257,7 +257,7 @@ async function checkJudgementStatus(supabase: SupabaseClient, room: Room) {
   const { data, error } = await supabase
     .from("user")
     .select()
-    .eq("id", winningUser)
+    .eq("userId", winningUser)
     .single();
 
   if (error) {
@@ -356,7 +356,7 @@ async function mintNFT(walletAddress: string, name: string, room: Room) {
       metadata: {
         name: name,
         image:
-          "https://www.google.com/url?sa=i&url=https%3A%2F%2Fpixers.ca%2Fwall-murals%2Ftrophy-cup-35234084&psig=AOvVaw2u4bBKExAgyWHtNzge2BuZ&ust=1719895998724000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCOiVq4OGhYcDFQAAAAAdAAAAABAE",
+          "https://img.pixers.pics/pho_wat(s3:700/FO/35/23/40/84/700_FO35234084_e52d78d4e1d6f15a006343eb2545966a.jpg,700,700,cms:2018/10/5bd1b6b8d04b8_220x50-watermark.png,over,480,650,jpg)/wall-murals-trophy-cup.jpg.jpg",
         description:
           "NFT to represent winning a challenge and being selected by the judge.",
       },
@@ -366,12 +366,19 @@ async function mintNFT(walletAddress: string, name: string, room: Room) {
   };
 
   const response = await fetch(
-    "https://staging.crossmint.com/api/2022-06-09/collections/{collectionId}/nfts/{id}",
+    `https://staging.crossmint.com/api/2022-06-09/collections/${process.env
+      .CROSSMINT_COLLECTION_ID!}/nfts/${room.id}`,
     options
   );
-
+  console.log({ status: response.status });
   if (!response.ok) {
+    console.log({
+      json: await response.json(),
+      message: "Something went wrong minting the NFT.",
+    });
     throw new Error("Failed to mint NFT");
   }
-  return response.json();
+  const result = await response.json();
+  console.log({ result });
+  return result;
 }
