@@ -1,9 +1,0 @@
-{
-    "buildCommand": "next build",
-    "crons": [
-        {
-            "path": "/api/cron",
-            "schedule": "* * * * *"
-        }
-    ]
-}
