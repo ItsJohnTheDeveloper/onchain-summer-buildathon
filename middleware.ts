@@ -11,7 +11,6 @@ export async function middleware(request: NextRequest) {
 
   // Bypass middleware for the base URL or adjust as needed for your login page
   const url = new URL(request.url);
-  // console.log({ url });
   if (
     url.pathname === "/" ||
     url.pathname === "/login" ||

@@ -37,8 +37,6 @@ export default function Register() {
     // @ts-expect-error - session type is wrong
     session?.authentication_factors?.[0]?.email_factor?.email_address ?? "";
 
-  console.log({ redirectURL, userId, sessionEmail });
-
   const mutationPostUser = useMutation({
     mutationKey: ["user"],
     mutationFn: postUser,
@@ -65,7 +63,6 @@ export default function Register() {
 
   if (userData) {
     // if a user exists, they are already registered so redirect them to the room/create page
-    console.log({ redirectURL });
     router.push(redirectURL);
   }
 
@@ -91,7 +88,6 @@ export default function Register() {
         email: sessionEmail,
       } as PostUserData);
 
-      console.log({ redirectURL });
       if (redirectURL) {
         router.push(redirectURL);
       }

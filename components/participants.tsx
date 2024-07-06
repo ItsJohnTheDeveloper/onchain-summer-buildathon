@@ -24,12 +24,8 @@ export const Participants = ({ room }: { room: Room }) => {
     try {
       const email = newEmail.trim();
 
-      console.log(`Inviting email ${email} to the room`);
-
-      // 1. Send invitation to email if user not already in db.
-      // 2. if user is in db, add to room.
+      // Send email invitation to user if they don't exist in db, otherwise add them to room.
       const participantUser = await getUserByEmail(email);
-      console.log({ participantUser });
       if (!participantUser) {
         const response = await fetch("/api/invite", {
           method: "POST",
@@ -40,7 +36,6 @@ export const Participants = ({ room }: { room: Room }) => {
         }
       }
 
-      console.log(`Successfully invited ${email} to the room`);
       const mutatedData: UpdateRoomData = {
         roomId: room.id,
         participants: [email],

@@ -13,8 +13,9 @@ export const postRoom = async (data: PostRoomData) => {
   const supabase = createServer();
   const room = await supabase.from("room").insert(data).select().single();
   if (room.error) {
-    console.log({ error: room.error });
-    throw new Error("There was an error creating room.");
+    throw new Error(
+      "There was an error creating a room. " + room.error.message
+    );
   }
   return room.data;
 };

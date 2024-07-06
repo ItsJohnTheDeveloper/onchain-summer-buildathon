@@ -34,7 +34,6 @@ export default function CreateRoom() {
         participants: [sessionEmail],
       };
       const room = await mutation.mutateAsync(mutateData);
-      console.log("successfully created room");
       router.push(`/room/${room.id}`);
     } catch (err) {
       console.error(err);
