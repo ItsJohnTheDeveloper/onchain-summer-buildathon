@@ -10,7 +10,6 @@
     "tailwindcss": {
       "callees": ["cn", "cva"],
       "classRegex": "^class(Name(s)?)?$",
-      // Keep eslint from looking at the wrong files.
       "cssFiles": [
         "!**/node_modules",
         "!**/.*",
