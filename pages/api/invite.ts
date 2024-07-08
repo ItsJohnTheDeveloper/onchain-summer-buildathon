@@ -41,7 +41,6 @@ export default async function handler(
     authUrl.searchParams.set("redirect", registerURL.toString());
 
     const magicLinkUrl = authUrl.toString();
-    console.log({ magicLinkUrl });
 
     await stytchClient.magicLinks.email.invite({
       email: body.email!,

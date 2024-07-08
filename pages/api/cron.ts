@@ -1,5 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
+/**
+ *  This cron job hits the Engine API to update the rooms, which in theory will run every so often.
+ */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

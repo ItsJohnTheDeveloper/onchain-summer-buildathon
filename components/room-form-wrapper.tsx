@@ -13,7 +13,6 @@ import { Button } from "./button";
 import { getAnswersByRoom } from "@/app/_lib/get/get-answers-by-room";
 import { PostAnswerData, postAnswer } from "@/app/_lib/post/post-answer";
 import { useEffect } from "react";
-import { getRoomAnswerByUserId } from "@/app/_lib/get/get-room-answer-by-user-id";
 import { UpdateRoomData, updateRoom } from "@/app/_lib/update/update-room";
 import { Winner } from "./winner";
 import { Check, Hourglass } from "./icons";
@@ -86,8 +85,6 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
       ] as any);
     },
   });
-
-  console.log({ room, participantUsers, participantUserIds });
 
   const roomMutation = useMutation({
     mutationKey: ["room", roomId],
