@@ -5,14 +5,14 @@ import { getUser } from "@/app/_lib/get/get-user";
 import { useStytchSession } from "@stytch/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Error from "next/error";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import { Typography } from "./typography";
 import { Participants } from "./participants";
 import { Textarea } from "./textarea";
 import { Button } from "./button";
 import { getAnswersByRoom } from "@/app/_lib/get/get-answers-by-room";
 import { PostAnswerData, postAnswer } from "@/app/_lib/post/post-answer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { UpdateRoomData, updateRoom } from "@/app/_lib/update/update-room";
 import { Winner } from "./winner";
 import { Check, Hourglass } from "./icons";
@@ -86,6 +86,7 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
     },
   });
 
+  const [isMutatingRoom, setIsMutatingRoom] = useState(false);
   const roomMutation = useMutation({
     mutationKey: ["room", roomId],
     mutationFn: updateRoom,
@@ -137,14 +138,15 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
   };
 
   const handleOnSubmitRoom = async () => {
-    console.log("submitting room");
-    // todo
+    setIsMutatingRoom(true);
     const mutateData: UpdateRoomData = {
       roomId: room.id,
       status: "awaiting-results",
     };
     // update the status of the room
-    await roomMutation.mutateAsync(mutateData);
+    await roomMutation.mutateAsync(mutateData).then(() => {
+      setIsMutatingRoom(false);
+    });
   };
 
   return (
@@ -218,10 +220,10 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
 
             <Button
               type="button"
-              disabled={!canSubmitRoom}
+              disabled={!canSubmitRoom || isMutatingRoom}
               onClick={handleOnSubmitRoom}
             >
-              Submit
+              {isMutatingRoom ? "Submitting..." : "Submit"}
             </Button>
           </>
         ) : null}
@@ -231,7 +233,7 @@ export default function RoomFormWrapper({ roomId }: { roomId: number }) {
         ) : null}
 
         {room.status === "complete" ? (
-          <Winner winnerUserId={room.winner} />
+          <Winner winnerUserId={room.winner} roomId={room.id} />
         ) : null}
       </form>
     </div>
